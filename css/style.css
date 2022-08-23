@@ -1,0 +1,49 @@
+#list {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.5cm;
+    border-collapse: collapse;
+
+    height: 100%;
+    margin-left: 40px;
+    margin-right: 40px;
+    color: white;
+    border: none;
+}
+
+#list th, #list td {
+    padding: auto;
+    width: 90vw;
+    height: 100px;
+}
+
+#list td {
+  border-bottom: 2px solid white;
+  font-size: 0.8cm;
+  font-weight: 600;
+}
+
+#list th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #272787;
+    color: white;
+    font-size: 1cm;
+    border-style : hidden!important;
+}
+
+#h6 {
+  font-size: 1cm;
+}
+
+body {
+  background-color: #272787;
+}
+
+#bahnhof {
+  color: white;
+  margin-left: 1cm;
+  font-size: 1cm;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bolder;
+}
