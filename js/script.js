@@ -219,6 +219,7 @@ function form() {
   resultInput.name = "results";
   resultInput.min = "5";
   resultInput.max = "20";
+  resultInput.value = "5";
 
   var resultLabel = document.createElement("label");
   resultLabel.setAttribute("for", "results");
