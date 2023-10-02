@@ -150,7 +150,7 @@ dataAll = data1 + date + data2 + station + data3 + date + data4 + results + data
 
             cell = row.insertCell(-1)
             cell.innerHTML = kante;
-            cell.style = "text-align: center";
+	    //cell.style = "text-align: center";
 
             cell = row.insertCell(-1)
             cell.innerHTML = abfahrt;
