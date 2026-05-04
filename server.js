@@ -1,7 +1,7 @@
 // server.js
 import { serve, file } from "bun";
 
-const PORT = 3000;
+const PORT = Number.parseInt(process.env.PORT ?? "3000", 10) || 3000;
 
 serve({
   port: PORT,
