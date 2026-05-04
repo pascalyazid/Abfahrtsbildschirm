@@ -3,24 +3,61 @@ import { serve, file } from "bun";
 
 const PORT = Number.parseInt(process.env.PORT ?? "3000", 10) || 3000;
 
+function normalizeBasePath(raw) {
+  if (raw == null || raw === "") return "";
+  let p = String(raw).trim();
+  if (p === "/" || p === ".") return "";
+  if (!p.startsWith("/")) p = "/" + p;
+  return p.replace(/\/+$/, "");
+}
+
+const BASE_PATH = normalizeBasePath(process.env.BASE_PATH);
+
+function stripBasePath(pathname) {
+  if (!BASE_PATH) return pathname;
+  if (pathname === BASE_PATH) return "/";
+  if (pathname.startsWith(BASE_PATH + "/")) {
+    const rest = pathname.slice(BASE_PATH.length);
+    return rest || "/";
+  }
+  return null;
+}
+
+let indexHtml = await Bun.file("./index.html").text();
+if (BASE_PATH) {
+  if (/[<"']/.test(BASE_PATH)) {
+    throw new Error("BASE_PATH must not contain <, \", or '");
+  }
+  indexHtml = indexHtml.replace(
+    "<head>",
+    `<head>\n    <base href="${BASE_PATH}/">`,
+  );
+}
+
 serve({
   port: PORT,
   async fetch(req) {
     const url = new URL(req.url);
+    const pathname = stripBasePath(url.pathname);
+    if (pathname == null) {
+      return new Response("Not found", { status: 404 });
+    }
 
     // 1. Serve static files (HTML, CSS, JS)
-    if (url.pathname === "/" || url.pathname === "/index.html") {
-      return new Response(file("./index.html"));
+    if (pathname === "/" || pathname === "/index.html") {
+      return new Response(indexHtml, {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
     }
-    if (url.pathname === "/css/style.css") {
+    if (pathname === "/css/style.css") {
       return new Response(file("./css/style.css"));
     }
-    if (url.pathname === "/js/clock.js") {
+    if (pathname === "/js/clock.js") {
       return new Response(file("./js/clock.js"));
     }
 
     // 2. HTMX Endpoint: Generate the HTML table for the departures
-    if (url.pathname === "/board") {
+    if (pathname === "/board") {
       const station = url.searchParams.get("station") || "";
       const limit = url.searchParams.get("results") || "5";
       const interval = url.searchParams.get("intervall") || "60";
@@ -41,7 +78,7 @@ serve({
           const stationname = data.station.name;
           html += `
                     <div id="board-container"
-                        hx-get="/board?station=${encodeURIComponent(station)}&results=${limit}&intervall=${interval}"
+                        hx-get="board?station=${encodeURIComponent(station)}&results=${limit}&intervall=${interval}"
                         hx-trigger="every ${interval}s"
                         hx-swap="outerHTML">
 
@@ -85,7 +122,7 @@ serve({
         } else {
           html += `
                     <div id="board-container"
-                        hx-get="/board?station=${encodeURIComponent(station)}&results=${limit}&intervall=${interval}"
+                        hx-get="board?station=${encodeURIComponent(station)}&results=${limit}&intervall=${interval}"
                         hx-trigger="every ${interval}s"
                         hx-swap="outerHTML">
                       <table id="list">
@@ -132,4 +169,6 @@ serve({
   },
 });
 
-console.log(`🚀 Server running with Bun at http://localhost:${PORT}`);
+console.log(
+  `🚀 Server running with Bun at http://localhost:${PORT}${BASE_PATH ? `${BASE_PATH}/` : ""}`,
+);

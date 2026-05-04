@@ -16,7 +16,7 @@
   <body>
 
     <!-- Native HTMX Form: Sends a GET to /board and puts the result in #board-container -->
-    <form id="setup-form" hx-get="/board" hx-target="#board-container" hx-swap="outerHTML">
+    <form id="setup-form" hx-get="board" hx-target="#board-container" hx-swap="outerHTML">
       <div>
         <input type="text" id="station" name="station" placeholder="Bahnhof" required>
       </div>

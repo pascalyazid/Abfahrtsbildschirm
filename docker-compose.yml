@@ -3,5 +3,6 @@ services:
     build: .
     environment:
       PORT: ${PORT:-3000}
+      BASE_PATH: ${BASE_PATH:-}
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
